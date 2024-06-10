@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinancialApi.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240605040954_User")]
+    [Migration("20240610024515_User")]
     partial class User
     {
         /// <inheritdoc />
@@ -36,6 +36,9 @@ namespace FinancialApi.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Password")
                         .IsRequired()

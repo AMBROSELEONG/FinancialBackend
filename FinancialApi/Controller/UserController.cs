@@ -83,6 +83,7 @@ namespace FinancialApi.Controller
 
             return Ok(new { success = true });
         }
+
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
         {
@@ -100,7 +101,45 @@ namespace FinancialApi.Controller
                 return BadRequest(new { success = false });
             }
 
-            return Ok(new {success = true, userID = checkUserData.UserID});
+            var malaysiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+            checkUserData.LastLogin = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, malaysiaTimeZone);
+            _context.Users.Update(checkUserData);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, userID = checkUserData.UserID, userName = checkUserData.UserName });
+        }
+
+        [HttpPost("Reset")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Email))
+            {
+                return BadRequest("Email is required.");
+            }
+
+            if (string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("Password is required.");
+            }
+
+            var existingUser = await _context.Users.FirstOrDefaultAsync(v => v.Email == request.Email);
+
+            if (existingUser == null)
+            {
+                return NotFound("Email not found.");
+            }
+
+            existingUser.Password = request.Password;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while resetting the password.");
+            }
         }
     }
 
@@ -123,6 +162,12 @@ namespace FinancialApi.Controller
     }
 
     public class SignInRequest
+    {
+        public required string Email { get; set; }
+        public required string Password { get; set; }
+    }
+
+    public class ResetRequest
     {
         public required string Email { get; set; }
         public required string Password { get; set; }
