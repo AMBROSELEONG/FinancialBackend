@@ -34,10 +34,21 @@ namespace FinancialApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("FingerPrint")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Signature")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -53,6 +64,8 @@ namespace FinancialApi.Migrations
 
                     b.ToTable("Users");
                 });
+
+           
 #pragma warning restore 612, 618
         }
     }

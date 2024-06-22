@@ -13,5 +13,9 @@ namespace FinancialApi.Models
         public required string Password { get; set; }
         public required string Token { get; set; }
         public DateTime LastLogin { get; set; }
+        public bool FingerPrint { get; set; }
+        public required string PublicKey { get; set; }
+        public required string Signature { get; set; }
+
     }
 }
